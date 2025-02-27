@@ -1,6 +1,7 @@
 extends CharacterBody2D
 class_name blob
 
+ # Set Starting Stats
 @export var hunger : float = 60
 @export var thirst : float = 60
 @export var rest : float = 90
@@ -27,6 +28,7 @@ func _ready() -> void:
 	main.current_blobs += 1
 	add_to_group("blobs")
 	
+	 # Randomize stats a bit
 	hunger = hunger * randf_range(1 - variation_multplier, 1 + variation_multplier)
 	stomach_capacity = hunger
 	thirst = thirst * randf_range(1 - variation_multplier, 1 + variation_multplier)
@@ -46,16 +48,19 @@ func _ready() -> void:
 		gender = "genderless"
 		rand_num = randf_range(0, 100)
 	
+	 # Hide small stat box
 	$MeshInstance2D.visible = false
 	$Label.visible = false
 
 func _process(delta: float) -> void:
+	 # Decrease stats by 1 per second on average speed
 	hunger -= stat_decrease_rate * delta
 	thirst -= stat_decrease_rate * delta
 	rest -= stat_decrease_rate * delta
 	if mating_cooldown > 0:
 		mating_cooldown -= 1 * delta
 	
+	 # If rest is less than 33%, and hungry or thirsty, decrease speed by amount of tiredness
 	if rest < starting_rest / 3 and (hunger < stomach_capacity / 2 or thirst < starting_thirst / 2):
 		speed = base_speed - ((starting_rest / 3) - rest)
 		if speed < 0:
@@ -63,31 +68,38 @@ func _process(delta: float) -> void:
 	else:
 		speed = base_speed
 	
+	 # Add fat if over-ate
 	if hunger > stomach_capacity:
 		fat += hunger - stomach_capacity
 		hunger = stomach_capacity
 	
+	 # Apply change in speed and size from fat
 	var prev_speed = speed
 	var size_mult = fat * 0.05 + 1
 	scale = Vector2(size_mult, size_mult)
 	speed = prev_speed - fat
 	
+	 # Detect if mouse in hovering over blob
 	var mouse_pos = get_global_mouse_position()
 	var distance_to_mouse = (position - mouse_pos).length()
 	if distance_to_mouse < 10 * size_mult:
 		if blob_showing_stats == false:
+			 # If it is, show small stat box
 			$Label.text = "Hung: " + String("%0.1f" % hunger) + "\nThir: " + String("%0.1f" % thirst) + "\nRest: " + String("%0.1f" % rest) + "\nFat: " + String("%0.1f" % fat)
 			$MeshInstance2D.visible = true
 			$Label.visible = true
 	else:
+		 # If not, hide it
 		$MeshInstance2D.visible = false
 		$Label.visible = false
 	
+	 # If showing extended stats, update them
 	var extended_stats = canvas_layer.get_node("Extended Stats")
 	if extended_stats and blob_showing_stats == true:
 		update_extended_stats(extended_stats)
 	
 	if hunger <= 0:
+		 # If no fat, die, if yes fat, decrease it
 		if fat > 0:
 			fat -= stat_decrease_rate * 0.33333 * delta
 		else:
@@ -104,6 +116,7 @@ func _process(delta: float) -> void:
 			death()
 	
 	if thirst <= 0:
+		 # Die of dehyration
 		var dehydrated_texture = load("res://art/DehydratedBlob.png")
 		
 		var stamp_sprite = Sprite2D.new()
@@ -128,12 +141,15 @@ func _process(delta: float) -> void:
 		death()
 
 func _physics_process(delta: float) -> void:
+	 # Move
 	move_and_slide()
 	
+	 # Don't go offscreen
 	position.x = clamp(position.x, -576, 576)
 	position.y = clamp(position.y, -324, 324)
 
 func birth_a_child(other_parent):
+	 # Create a new blob scene
 	main.global_blob_count += 1
 	var child = blob_scene.instantiate()
 	child.position = position
@@ -163,7 +179,11 @@ func birth_a_child(other_parent):
 	main.add_child(child)
 
 func _on_button_toggled(toggled_on: bool) -> void:
+	 # When blob clicked
 	if toggled_on == true:
+		 # If it wasn't selected, select it
+		
+		 # Delete any other blob cameras, create a new camera on this blob, and make it the active one
 		var nodes = get_tree().get_nodes_in_group("blob_cameras")
 		for node in nodes:
 			node.queue_free()
@@ -172,6 +192,7 @@ func _on_button_toggled(toggled_on: bool) -> void:
 		add_child(camera)
 		main.get_node("Camera2D").enabled = false
 		
+		 # Show this blobs extended stats
 		blob_showing_stats = true
 		var stat_box = MeshInstance2D.new()
 		stat_box.mesh = load("res://stat_box.tres")
@@ -186,16 +207,21 @@ func _on_button_toggled(toggled_on: bool) -> void:
 		canvas_layer.add_child(stat_box)
 		canvas_layer.add_child(extended_stats)
 	else:
+		 # If it was selected, unselect it
+		
+		 # Make main camera active again
 		blob_showing_stats = false
 		var nodes = get_tree().get_nodes_in_group("blob_cameras")
 		for node in nodes:
 			node.queue_free()
 		main.get_node("Camera2D").enabled = true
+		 # Get rid of extended stats
 		nodes = get_tree().get_nodes_in_group("extended_stats")
 		for node in nodes:
 			node.queue_free()
 
 func update_extended_stats(label):
+	 # Update extended stats
 	label.text = "Extended Stats:"
 	label.text += "\n\nID: " + name
 	label.text += "\nState: " + str(get_node("StateMachine").current_state.name)
@@ -211,6 +237,7 @@ func update_extended_stats(label):
 	label.text += "\nMating Cooldown: " + String("%0.3f" % mating_cooldown)
 
 func death():
+	 # Remove from groups, delete any camera and extended stats, and delete the node
 	main.current_blobs -= 1
 	remove_from_group("blobs")
 	remove_from_group("suitable_for_mating")
@@ -226,6 +253,7 @@ func death():
 	queue_free()
 
 func send_stats_to_main(i):
+	 # Read stats and send them to main for averages
 	main.stomach_capacities[i] = stomach_capacity
 	main.starting_thirsts[i] = starting_thirst
 	main.starting_rests[i] = starting_rest

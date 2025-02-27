@@ -7,7 +7,9 @@ var hunger
 var thirst
 
 func enter():
+	 # Check if blob is assigned
 	if blob != null:
+		 # Stop moving, change sprite to sleeping
 		blob.velocity = Vector2.ZERO
 		sprite = blob.get_node("Sprite")
 		sprite.texture = load("res://art/SleepingBlob.png")
@@ -20,6 +22,7 @@ func update(delta):
 	
 	blob.rest += blob.stat_decrease_rate * 3 * delta
 	
+	 # If hungry or thirty, enter respective state, if rested enough, enter idle
 	if hunger < blob.stomach_capacity / 2:
 		transitioned.emit(self, "hungry")
 		sprite.texture = load("res://art/Blob.png")

@@ -30,17 +30,11 @@ State Priority:
 	Idle
 
 Alpha Plans:
-	Alpha 1.1 ✓ :
-		Main Menu ✓
-		Hover over blob to see stats ✓
-		Click blob to see more stats and focus camera on it ✓
-		UI Elements ✓
-		Pause Menu ✓
 	Alpha 1.2:
 		Priority closest food/water
-		Comments on the code
-		Blobs bounce off border instead of walking into them
-		Layering
+		Comments on the code - CHECK
+		Blobs bounce off border instead of walking into it
+		Proper layering
 		Highly customizable
 		Priority hunger/thirst/sleep for whichever would kill them first
 	Bugs to Fix:
