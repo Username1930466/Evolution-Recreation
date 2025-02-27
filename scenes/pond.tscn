@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfmeusf3ic0fm"]
+
+[ext_resource type="Script" path="res://scripts/pond.gd" id="1_e2iie"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_jm4hp"]
+load_path = "res://.godot/imported/Pond.png-c8fd51f475b530ebfdc1f7d27abfde5e.ctex"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tkcra"]
+radius = 8.0
+height = 32.0
+
+[node name="pond" type="Area2D" groups=["water"]]
+light_mask = 4
+scale = Vector2(4, 4)
+script = ExtResource("1_e2iie")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = SubResource("CompressedTexture2D_jm4hp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_tkcra")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

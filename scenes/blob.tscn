@@ -1,0 +1,79 @@
+[gd_scene load_steps=11 format=3 uid="uid://d3lmqdu2upaoe"]
+
+[ext_resource type="Script" path="res://scripts/blob.gd" id="1_rqtio"]
+[ext_resource type="Texture2D" uid="uid://dpmptmiejgnx8" path="res://art/Blob.png" id="2_rr8lw"]
+[ext_resource type="Script" path="res://scripts/state_machine/state_machine.gd" id="3_exwl3"]
+[ext_resource type="Script" path="res://scripts/state_machine/states/idle.gd" id="4_ktsls"]
+[ext_resource type="Script" path="res://scripts/state_machine/states/hungry.gd" id="5_43c0f"]
+[ext_resource type="Script" path="res://scripts/state_machine/states/thirsty.gd" id="6_oa5e1"]
+[ext_resource type="Script" path="res://scripts/state_machine/states/sleeping.gd" id="7_amffd"]
+[ext_resource type="Script" path="res://scripts/state_machine/states/suitable_for_mating.gd" id="8_1vh1b"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ydoca"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_ony2h"]
+
+[node name="Blob" type="CharacterBody2D"]
+collision_mask = 6
+input_pickable = true
+script = ExtResource("1_rqtio")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+modulate = Color(1, 0, 0, 1)
+texture_filter = 1
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("2_rr8lw")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ydoca")
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("3_exwl3")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("blob")]
+script = ExtResource("4_ktsls")
+blob = NodePath("../..")
+
+[node name="Hungry" type="Node" parent="StateMachine" node_paths=PackedStringArray("blob")]
+script = ExtResource("5_43c0f")
+blob = NodePath("../..")
+
+[node name="Thirsty" type="Node" parent="StateMachine" node_paths=PackedStringArray("blob")]
+script = ExtResource("6_oa5e1")
+blob = NodePath("../..")
+
+[node name="Sleeping" type="Node" parent="StateMachine" node_paths=PackedStringArray("blob")]
+script = ExtResource("7_amffd")
+blob = NodePath("../..")
+
+[node name="suitable_for_mating" type="Node" parent="StateMachine" node_paths=PackedStringArray("blob")]
+script = ExtResource("8_1vh1b")
+blob = NodePath("../..")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="."]
+modulate = Color(0.392157, 0.392157, 0.392157, 0.784314)
+position = Vector2(-32, -32)
+scale = Vector2(65, 65)
+mesh = SubResource("QuadMesh_ony2h")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -65.0
+offset_top = -65.0
+theme_override_font_sizes/font_size = 10
+text = "Hung: 30
+Thir: 30
+Rest: 60
+Fat: 0
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="."]
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+toggle_mode = true
+
+[connection signal="toggled" from="Button" to="." method="_on_button_toggled"]

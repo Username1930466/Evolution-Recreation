@@ -1,0 +1,49 @@
+Blobs have five states:
+	Idle:
+		If hunger, thirst and rest are above certain level. Either stay still or move randomly.
+	Hungry:
+		If hunger is below certain level. Search for food, if food is in sight, go to it and eat it, if not, move randomly and look again.
+	Thirsty:
+		If thirst is below certain level. Search for water, if water is in sight, go to it and drink it, if not, move randomly and look again.
+	Tired:
+		If hunger and thirst is above certain level and rest is below certain level, sleep. If hungry or thirsty and tired, decrease speed by amount of tiredness under acceptable level.
+	Suitable For Mating:
+		See Below
+
+Stats:
+	Speed - Decreased when tired or hungry, higher base speed = get hungry, thirsty and tired faster.
+	Sight - How far it can see for food.
+	Stomach Capacity - How much food it can fit in its stomach, if it eats more than it can hold, it goes over in fat.
+	Fat - Start with none. higher fat = decreased speed by amount of fat. higher fat = increased stomach capacity by amount of fat. if wouldve starved to death, can process fat into food.
+	Gender - Chosen randomly of three values, male, female, and genderless. Males and females can mate. Genderless can only mate with eachother.
+
+Reproduction:
+	If a blob's hunger, thirst and resat are above a certain level (higher than the minimum to be idle), they are suitable for mating.
+	If a male and female blob, or two genderless blobs suitable for mating and within eachothers' range of sights, they will go to eachother, and reproduce.
+	The child's stats will be the average of the parents' with some modifiers as mutation. Gender is male or female if the parents have genders, and genderless if the parents don't.
+
+State Priority:
+	Hungry
+	Thirsty
+	Tired
+	Suitable For Mating
+	Idle
+
+Alpha Plans:
+	Alpha 1.1 ✓ :
+		Main Menu ✓
+		Hover over blob to see stats ✓
+		Click blob to see more stats and focus camera on it ✓
+		UI Elements ✓
+		Pause Menu ✓
+	Alpha 1.2:
+		Priority closest food/water
+		Comments on the code
+		Blobs bounce off border instead of walking into them
+		Layering
+		Highly customizable
+		Priority hunger/thirst/sleep for whichever would kill them first
+	Bugs to Fix:
+		Blobs (maybe) reproducing with no mate
+		Not changing button toggle to false when changing camera from one blob to another
+		When selected a blob, sometimes it just unselects

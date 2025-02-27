@@ -1,0 +1,234 @@
+extends CharacterBody2D
+class_name blob
+
+@export var hunger : float = 60
+@export var thirst : float = 60
+@export var rest : float = 90
+@export var base_speed = 40
+@export var sight = 200
+@export var variation_multplier = 0.25
+var stat_decrease_rate = base_speed / 40
+var stomach_capacity
+var starting_thirst
+var starting_rest
+var speed
+@export var fat = 0
+var gender = randi_range(1, 3)
+var mating_cooldown = 15
+var blob_scene = preload("res://scenes/blob.tscn")
+var main
+var rand_num
+var canvas_layer
+var blob_showing_stats = false
+
+func _ready() -> void:
+	main = get_parent()
+	canvas_layer = main.get_node("CanvasLayer")
+	main.current_blobs += 1
+	add_to_group("blobs")
+	
+	hunger = hunger * randf_range(1 - variation_multplier, 1 + variation_multplier)
+	stomach_capacity = hunger
+	thirst = thirst * randf_range(1 - variation_multplier, 1 + variation_multplier)
+	starting_thirst = thirst
+	base_speed = base_speed * randf_range(1 - variation_multplier, 1 + variation_multplier)
+	speed = base_speed
+	sight = sight * randf_range(1 - variation_multplier, 1 + variation_multplier)
+	rest = rest * randf_range(1 - variation_multplier, 1 + variation_multplier)
+	starting_rest = rest
+	$Button.modulate.a = 0
+	
+	if gender == 1:
+		gender = "female"
+	elif gender == 2:
+		gender = "male"
+	else:
+		gender = "genderless"
+		rand_num = randf_range(0, 100)
+	
+	$MeshInstance2D.visible = false
+	$Label.visible = false
+
+func _process(delta: float) -> void:
+	hunger -= stat_decrease_rate * delta
+	thirst -= stat_decrease_rate * delta
+	rest -= stat_decrease_rate * delta
+	if mating_cooldown > 0:
+		mating_cooldown -= 1 * delta
+	
+	if rest < starting_rest / 3 and (hunger < stomach_capacity / 2 or thirst < starting_thirst / 2):
+		speed = base_speed - ((starting_rest / 3) - rest)
+		if speed < 0:
+			speed = 0
+	else:
+		speed = base_speed
+	
+	if hunger > stomach_capacity:
+		fat += hunger - stomach_capacity
+		hunger = stomach_capacity
+	
+	var prev_speed = speed
+	var size_mult = fat * 0.05 + 1
+	scale = Vector2(size_mult, size_mult)
+	speed = prev_speed - fat
+	
+	var mouse_pos = get_global_mouse_position()
+	var distance_to_mouse = (position - mouse_pos).length()
+	if distance_to_mouse < 10 * size_mult:
+		if blob_showing_stats == false:
+			$Label.text = "Hung: " + String("%0.1f" % hunger) + "\nThir: " + String("%0.1f" % thirst) + "\nRest: " + String("%0.1f" % rest) + "\nFat: " + String("%0.1f" % fat)
+			$MeshInstance2D.visible = true
+			$Label.visible = true
+	else:
+		$MeshInstance2D.visible = false
+		$Label.visible = false
+	
+	var extended_stats = canvas_layer.get_node("Extended Stats")
+	if extended_stats and blob_showing_stats == true:
+		update_extended_stats(extended_stats)
+	
+	if hunger <= 0:
+		if fat > 0:
+			fat -= stat_decrease_rate * 0.33333 * delta
+		else:
+			var starved_texture = load("res://art/StarvedBlob.png")
+			
+			var stamp_sprite = Sprite2D.new()
+			stamp_sprite.texture = starved_texture
+			stamp_sprite.position = position
+			stamp_sprite.modulate = $Sprite.modulate
+			stamp_sprite.rotation = randf_range(0, PI * 2)
+			stamp_sprite.scale = scale * 0.65
+			
+			get_parent().add_child(stamp_sprite)
+			death()
+	
+	if thirst <= 0:
+		var dehydrated_texture = load("res://art/DehydratedBlob.png")
+		
+		var stamp_sprite = Sprite2D.new()
+		stamp_sprite.texture = dehydrated_texture
+		stamp_sprite.position = position
+		stamp_sprite.rotation = randf_range(0, PI * 2)
+		stamp_sprite.scale = scale * 0.65
+		
+		get_parent().add_child(stamp_sprite)
+		death()
+	
+	if rest <= 0:
+		var sleep_deprived_texture = load("res://art/SleepDeprivedBlob.png")
+		
+		var stamp_sprite = Sprite2D.new()
+		stamp_sprite.texture = sleep_deprived_texture
+		stamp_sprite.position = position
+		stamp_sprite.modulate = $Sprite.modulate
+		stamp_sprite.scale = scale * 0.65
+		
+		get_parent().add_child(stamp_sprite)
+		death()
+
+func _physics_process(delta: float) -> void:
+	move_and_slide()
+	
+	position.x = clamp(position.x, -576, 576)
+	position.y = clamp(position.y, -324, 324)
+
+func birth_a_child(other_parent):
+	main.global_blob_count += 1
+	var child = blob_scene.instantiate()
+	child.position = position
+	var sprite = child.get_node("Sprite")
+	 # Average color between parents
+	var avg_color = ($Sprite.modulate + other_parent.get_node("Sprite").modulate) / 2
+	 # Avergae color between parent 1 and average
+	var avg_color_1 = ($Sprite.modulate + avg_color) / 2
+	 # Average color between parent 2 and average
+	var avg_color_2 = (other_parent.get_node("Sprite").modulate + avg_color) / 2
+	 # Set color to random between semi-averages of each parent
+	var color = Color(randf_range(avg_color_1.r, avg_color_2.r), randf_range(avg_color_1.g, avg_color_2.g), randf_range(avg_color_1.b, avg_color_2.b), 1)
+	sprite.modulate = color
+	 # Other stats get a randomness multiplier in the _onready(), so we just take the average
+	child.hunger = (stomach_capacity + other_parent.stomach_capacity) / 2
+	child.thirst = (starting_thirst + other_parent.starting_thirst) / 2
+	child.rest = (starting_rest + other_parent.starting_rest) / 2
+	child.base_speed = (base_speed + other_parent.base_speed) / 2
+	child.sight = (sight + other_parent.sight) / 2
+	child.mating_cooldown = 15
+	if gender == "female" or "male":
+		child.gender = randi_range(1, 2)
+	else:
+		child.gender = 3
+	
+	child.set_name("Blob_%d" % main.global_blob_count)
+	main.add_child(child)
+
+func _on_button_toggled(toggled_on: bool) -> void:
+	if toggled_on == true:
+		var nodes = get_tree().get_nodes_in_group("blob_cameras")
+		for node in nodes:
+			node.queue_free()
+		var camera = Camera2D.new()
+		camera.add_to_group("blob_cameras")
+		add_child(camera)
+		main.get_node("Camera2D").enabled = false
+		
+		blob_showing_stats = true
+		var stat_box = MeshInstance2D.new()
+		stat_box.mesh = load("res://stat_box.tres")
+		stat_box.modulate = $MeshInstance2D.modulate
+		var extended_stats = Label.new()
+		extended_stats.name = "Extended Stats"
+		extended_stats.size = Vector2(120, 23)
+		extended_stats.position = Vector2(81, 74)
+		update_extended_stats(extended_stats)
+		stat_box.add_to_group("extended_stats")
+		extended_stats.add_to_group("extended_stats")
+		canvas_layer.add_child(stat_box)
+		canvas_layer.add_child(extended_stats)
+	else:
+		blob_showing_stats = false
+		var nodes = get_tree().get_nodes_in_group("blob_cameras")
+		for node in nodes:
+			node.queue_free()
+		main.get_node("Camera2D").enabled = true
+		nodes = get_tree().get_nodes_in_group("extended_stats")
+		for node in nodes:
+			node.queue_free()
+
+func update_extended_stats(label):
+	label.text = "Extended Stats:"
+	label.text += "\n\nID: " + name
+	label.text += "\nState: " + str(get_node("StateMachine").current_state.name)
+	label.text += "\n\nHunger: " + String("%0.3f" % hunger)
+	label.text += "\nThirst: " + String("%0.3f" % thirst)
+	label.text += "\nRest: " + String("%0.3f" % rest)
+	label.text += "\nFat: " + String("%0.3f" % fat)
+	label.text += "\n\nGender: " + gender
+	label.text += "\nBase Speed: " + String("%0.3f" % base_speed)
+	label.text += "\nSpeed: " + String("%0.3f" % speed)
+	label.text += "\nSight: " + String("%0.3f" % sight)
+	label.text += "\nStomach Capacity: " + String("%0.3f" % stomach_capacity)
+	label.text += "\nMating Cooldown: " + String("%0.3f" % mating_cooldown)
+
+func death():
+	main.current_blobs -= 1
+	remove_from_group("blobs")
+	remove_from_group("suitable_for_mating")
+	blob_showing_stats = false
+	var nodes = get_tree().get_nodes_in_group("blob_cameras")
+	for node in nodes:
+		node.queue_free()
+	main.get_node("Camera2D").enabled = true
+	nodes = get_tree().get_nodes_in_group("extended_stats")
+	for node in nodes:
+		node.queue_free()
+	
+	queue_free()
+
+func send_stats_to_main(i):
+	main.stomach_capacities[i] = stomach_capacity
+	main.starting_thirsts[i] = starting_thirst
+	main.starting_rests[i] = starting_rest
+	main.fats[i] = fat
+	main.base_speeds[i] = base_speed
+	main.sights[i] = sight

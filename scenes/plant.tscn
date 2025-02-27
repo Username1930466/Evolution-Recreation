@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://bp2517saiosg"]
+
+[ext_resource type="Script" path="res://scripts/plant.gd" id="1_73frh"]
+[ext_resource type="Texture2D" uid="uid://naa38ew73qn6" path="res://art/Plant.png" id="2_icyf2"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_de1qb"]
+radius = 2.0
+height = 14.0
+
+[node name="Plant" type="Area2D" groups=["food"]]
+scale = Vector2(2, 2)
+collision_layer = 2
+script = ExtResource("1_73frh")
+metadata/_edit_group_ = true
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_icyf2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("CapsuleShape2D_de1qb")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
