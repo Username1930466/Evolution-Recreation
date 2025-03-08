@@ -35,6 +35,7 @@ func _ready() -> void:
 		var sprite = blob.get_node("Sprite")
 		sprite.modulate = Color(randf_range(0, 1), randf_range(0, 1), randf_range(0, 1))
 		blob.set_name("Blob_%d" % global_blob_count)
+		blob.generation = 0
 		add_child(blob)
 	
 	 # Create starting plants

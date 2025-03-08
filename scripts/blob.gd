@@ -21,6 +21,7 @@ var main
 var rand_num
 var canvas_layer
 var blob_showing_stats = false
+var generation
 
 func _ready() -> void:
 	main = get_parent()
@@ -176,6 +177,7 @@ func birth_a_child(other_parent):
 		child.gender = 3
 	
 	child.set_name("Blob_%d" % main.global_blob_count)
+	child.generation = generation + 1
 	main.add_child(child)
 
 func _on_button_toggled(toggled_on: bool) -> void:
@@ -235,6 +237,7 @@ func update_extended_stats(label):
 	label.text += "\nSight: " + String("%0.3f" % sight)
 	label.text += "\nStomach Capacity: " + String("%0.3f" % stomach_capacity)
 	label.text += "\nMating Cooldown: " + String("%0.3f" % mating_cooldown)
+	label.text += "\nGeneration: " + str(generation)
 
 func death():
 	 # Remove from groups, delete any camera and extended stats, and delete the node

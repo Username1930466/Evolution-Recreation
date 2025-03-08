@@ -81,15 +81,15 @@ func iterate_through_group(nodes):
 	for node in nodes:
 		 # If within sight and suitable gender, make target_mate
 		if gender == "female":
-			if node.position.distance_to(blob.position) <= sight and node.gender == "male":
+			if node.position.distance_to(blob.position) <= sight and node.gender == "male" and blob.generation == node.generation:
 				target_mate = node
 				break
 		if gender == "male":
-			if node.position.distance_to(blob.position) <= sight and node.gender == "female":
+			if node.position.distance_to(blob.position) <= sight and node.gender == "female" and blob.generation == node.generation:
 				target_mate = node
 				break
 		if gender == "genderless":
-			if node.position.distance_to(blob.position) <= sight and node.gender == "genderless":
+			if node.position.distance_to(blob.position) <= sight and node.gender == "genderless" and blob.generation == node.generation:
 				target_mate = node
 				break
 	

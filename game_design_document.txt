@@ -37,10 +37,9 @@ Alpha Plans:
 		Proper layering
 		Highly customizable
 		Priority hunger/thirst/sleep for whichever would kill them first
+		Generation as a stat - CHECK
+		Only blobs with same generation can mate - CHECK
 	Bugs to Fix:
 		Blobs (maybe) reproducing with no mate
 		Not changing button toggle to false when changing camera from one blob to another
 		When selected a blob, sometimes it just unselects (probably because the button un-presses itself, can fix by making if_pressed a variable and changing it by clicking the button)
-
-
-Tracking Generations as a stat
