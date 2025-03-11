@@ -30,15 +30,6 @@ State Priority:
 	Idle
 
 Alpha Plans:
-	Alpha 1.2:
-		Priority closest food/water/mate - CHECK
-		Comments on the code - CHECK
-		Blobs bounce off border instead of walking into it - CHECK
-		Proper layering - CHECK
-		Highly customizable - CHECK
-		Priority hunger/thirst/sleep for whichever would kill them first - CHECK
-		Generation as a stat - CHECK
-		Only blobs with same generation can mate - CHECK
 	Bugs to Fix:
 		Stats dont update every other time when switching between blobs
 		Extended stats de-select after a little while and dont like coming back
