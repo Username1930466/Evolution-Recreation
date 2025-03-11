@@ -2,42 +2,43 @@ extends CharacterBody2D
 class_name blob
 
  # Set Starting Stats
-@export var hunger : float = 60
-@export var thirst : float = 60
-@export var rest : float = 90
-@export var base_speed = 40
-@export var sight = 200
-@export var variation_multplier = 0.25
-var stat_decrease_rate = base_speed / 40
+var hunger : float
+var thirst : float
+var rest : float
+var base_speed : float
+var sight : float
+var variation_multiplier : float
+var stat_decrease_rate : float
 var stomach_capacity
 var starting_thirst
 var starting_rest
 var speed
-@export var fat = 0
+var fat : float
 var gender = randi_range(1, 3)
 var mating_cooldown = 15
 var blob_scene = preload("res://scenes/blob.tscn")
 var main
 var rand_num
 var canvas_layer
-var blob_showing_stats = false
 var generation
+var selected : bool = false
 
 func _ready() -> void:
+	stat_decrease_rate = base_speed / 40
 	main = get_parent()
 	canvas_layer = main.get_node("CanvasLayer")
 	main.current_blobs += 1
 	add_to_group("blobs")
 	
 	 # Randomize stats a bit
-	hunger = hunger * randf_range(1 - variation_multplier, 1 + variation_multplier)
+	hunger = hunger * randf_range(1 - variation_multiplier, 1 + variation_multiplier)
 	stomach_capacity = hunger
-	thirst = thirst * randf_range(1 - variation_multplier, 1 + variation_multplier)
+	thirst = thirst * randf_range(1 - variation_multiplier, 1 + variation_multiplier)
 	starting_thirst = thirst
-	base_speed = base_speed * randf_range(1 - variation_multplier, 1 + variation_multplier)
+	base_speed = base_speed * randf_range(1 - variation_multiplier, 1 + variation_multiplier)
 	speed = base_speed
-	sight = sight * randf_range(1 - variation_multplier, 1 + variation_multplier)
-	rest = rest * randf_range(1 - variation_multplier, 1 + variation_multplier)
+	sight = sight * randf_range(1 - variation_multiplier, 1 + variation_multiplier)
+	rest = rest * randf_range(1 - variation_multiplier, 1 + variation_multiplier)
 	starting_rest = rest
 	$Button.modulate.a = 0
 	
@@ -84,7 +85,7 @@ func _process(delta: float) -> void:
 	var mouse_pos = get_global_mouse_position()
 	var distance_to_mouse = (position - mouse_pos).length()
 	if distance_to_mouse < 10 * size_mult:
-		if blob_showing_stats == false:
+		if selected == false:
 			 # If it is, show small stat box
 			$Label.text = "Hung: " + String("%0.1f" % hunger) + "\nThir: " + String("%0.1f" % thirst) + "\nRest: " + String("%0.1f" % rest) + "\nFat: " + String("%0.1f" % fat)
 			$MeshInstance2D.visible = true
@@ -96,7 +97,7 @@ func _process(delta: float) -> void:
 	
 	 # If showing extended stats, update them
 	var extended_stats = canvas_layer.get_node("Extended Stats")
-	if extended_stats and blob_showing_stats == true:
+	if extended_stats and selected == true:
 		update_extended_stats(extended_stats)
 	
 	if hunger <= 0:
@@ -145,9 +146,11 @@ func _physics_process(delta: float) -> void:
 	 # Move
 	move_and_slide()
 	
-	 # Don't go offscreen
-	position.x = clamp(position.x, -576, 576)
-	position.y = clamp(position.y, -324, 324)
+	 # Bounce off edge of screen if touching it
+	if position.x < -576 or position.x > 576:
+		velocity.x = -velocity.x
+	if position.y < -324 or position.y > 324:
+		velocity.y = -velocity.y
 
 func birth_a_child(other_parent):
 	 # Create a new blob scene
@@ -171,6 +174,7 @@ func birth_a_child(other_parent):
 	child.base_speed = (base_speed + other_parent.base_speed) / 2
 	child.sight = (sight + other_parent.sight) / 2
 	child.mating_cooldown = 15
+	child.fat = main.starting_fat
 	if gender == "female" or "male":
 		child.gender = randi_range(1, 2)
 	else:
@@ -179,48 +183,6 @@ func birth_a_child(other_parent):
 	child.set_name("Blob_%d" % main.global_blob_count)
 	child.generation = generation + 1
 	main.add_child(child)
-
-func _on_button_toggled(toggled_on: bool) -> void:
-	 # When blob clicked
-	if toggled_on == true:
-		 # If it wasn't selected, select it
-		
-		 # Delete any other blob cameras, create a new camera on this blob, and make it the active one
-		var nodes = get_tree().get_nodes_in_group("blob_cameras")
-		for node in nodes:
-			node.queue_free()
-		var camera = Camera2D.new()
-		camera.add_to_group("blob_cameras")
-		add_child(camera)
-		main.get_node("Camera2D").enabled = false
-		
-		 # Show this blobs extended stats
-		blob_showing_stats = true
-		var stat_box = MeshInstance2D.new()
-		stat_box.mesh = load("res://stat_box.tres")
-		stat_box.modulate = $MeshInstance2D.modulate
-		var extended_stats = Label.new()
-		extended_stats.name = "Extended Stats"
-		extended_stats.size = Vector2(120, 23)
-		extended_stats.position = Vector2(81, 74)
-		update_extended_stats(extended_stats)
-		stat_box.add_to_group("extended_stats")
-		extended_stats.add_to_group("extended_stats")
-		canvas_layer.add_child(stat_box)
-		canvas_layer.add_child(extended_stats)
-	else:
-		 # If it was selected, unselect it
-		
-		 # Make main camera active again
-		blob_showing_stats = false
-		var nodes = get_tree().get_nodes_in_group("blob_cameras")
-		for node in nodes:
-			node.queue_free()
-		main.get_node("Camera2D").enabled = true
-		 # Get rid of extended stats
-		nodes = get_tree().get_nodes_in_group("extended_stats")
-		for node in nodes:
-			node.queue_free()
 
 func update_extended_stats(label):
 	 # Update extended stats
@@ -244,9 +206,10 @@ func death():
 	main.current_blobs -= 1
 	remove_from_group("blobs")
 	remove_from_group("suitable_for_mating")
-	blob_showing_stats = false
+	selected = false
 	var nodes = get_tree().get_nodes_in_group("blob_cameras")
 	for node in nodes:
+		node.get_parent().selected = false
 		node.queue_free()
 	main.get_node("Camera2D").enabled = true
 	nodes = get_tree().get_nodes_in_group("extended_stats")
@@ -263,3 +226,51 @@ func send_stats_to_main(i):
 	main.fats[i] = fat
 	main.base_speeds[i] = base_speed
 	main.sights[i] = sight
+
+func _on_button_pressed() -> void:
+	 # When blob clicked
+	if selected == true:
+		selected = false
+	else:
+		selected = true
+	
+	if selected == true:
+		 # Delete any other blob cameras, create a new camera on this blob, and make it the active one
+		var nodes = get_tree().get_nodes_in_group("blob_cameras")
+		for node in nodes:
+			node.get_parent().selected = false
+			node.queue_free()
+		var camera = Camera2D.new()
+		camera.add_to_group("blob_cameras")
+		add_child(camera)
+		main.get_node("Camera2D").enabled = false
+		 # Delete any other blobs extended stats
+		nodes = get_tree().get_nodes_in_group("extended_stats")
+		for node in nodes:
+			node.queue_free()
+		
+		 # Show this blobs extended stats
+		var stat_box = MeshInstance2D.new()
+		stat_box.mesh = load("res://stat_box.tres")
+		stat_box.modulate = $MeshInstance2D.modulate
+		var extended_stats = Label.new()
+		extended_stats.name = "Extended Stats"
+		extended_stats.size = Vector2(120, 23)
+		extended_stats.position = Vector2(81, 74)
+		update_extended_stats(extended_stats)
+		stat_box.add_to_group("extended_stats")
+		extended_stats.add_to_group("extended_stats")
+		canvas_layer.add_child(stat_box)
+		canvas_layer.add_child(extended_stats)
+		selected = true
+	else:
+		 # Make main camera active again
+		var nodes = get_tree().get_nodes_in_group("blob_cameras")
+		for node in nodes:
+			node.queue_free()
+		main.get_node("Camera2D").enabled = true
+		 # Get rid of extended stats
+		nodes = get_tree().get_nodes_in_group("extended_stats")
+		for node in nodes:
+			node.queue_free()
+		selected = false

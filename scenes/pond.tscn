@@ -11,6 +11,8 @@ height = 32.0
 
 [node name="pond" type="Area2D" groups=["water"]]
 light_mask = 4
+z_index = -1
+z_as_relative = false
 scale = Vector2(4, 4)
 script = ExtResource("1_e2iie")
 

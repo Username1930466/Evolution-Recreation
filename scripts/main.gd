@@ -1,10 +1,10 @@
 extends Node2D
 
  # Define variables
-@export var starting_blobs = 20
-@export var starting_plants = 20
-@export var starting_ponds = 10
-@export var seconds_per_plant = 1
+var starting_blobs : int
+var starting_plants : int
+var starting_ponds : int
+var seconds_per_plant : float
  # Define scenes
 var blob_scene = preload("res://scenes/blob.tscn")
 var plant_scene = preload("res://scenes/plant.tscn")
@@ -25,6 +25,15 @@ var avg_fat : Dictionary
 var avg_base_speed : Dictionary
 var avg_sight : Dictionary
 var script_paused = false
+var avg_starting_stomach_capacity : float
+var avg_starting_starting_thirst : float
+var avg_starting_starting_rest : float
+var avg_starting_base_speed : float
+var avg_starting_sight : float
+var stat_variation_multiplier : float
+var starting_fat : float
+var plant_hunger_value : float
+var pond_thirst_value : float
 
 func _ready() -> void:
 	 # Create starting blobs
@@ -36,18 +45,27 @@ func _ready() -> void:
 		sprite.modulate = Color(randf_range(0, 1), randf_range(0, 1), randf_range(0, 1))
 		blob.set_name("Blob_%d" % global_blob_count)
 		blob.generation = 0
+		blob.hunger = avg_starting_stomach_capacity
+		blob.thirst = avg_starting_starting_thirst
+		blob.rest = avg_starting_starting_rest
+		blob.base_speed = avg_starting_base_speed
+		blob.sight = avg_starting_sight
+		blob.variation_multiplier = stat_variation_multiplier
+		blob.fat = starting_fat
 		add_child(blob)
 	
 	 # Create starting plants
 	for i in starting_plants:
 		var plant = plant_scene.instantiate()
 		plant.position = Vector2(randf_range(-576, 576), randf_range(-324, 324))
+		plant.hunger_value = plant_hunger_value
 		add_child(plant)
 	
 	 # Create starting ponds
 	for i in starting_ponds:
 		var pond = pond_scene.instantiate()
-		pond.position = Vector2(randf_range(-576, 576), randf_range(-324, 324))
+		pond.position = Vector2(randf_range(-556, 556), randf_range(-304, 304))
+		pond.thirst_value = pond_thirst_value
 		add_child(pond)
 	
 	spawn_plants_infinite()
@@ -62,6 +80,7 @@ func spawn_plants_infinite():
 			await get_tree().create_timer(seconds_per_plant).timeout
 			var plant = plant_scene.instantiate()
 			plant.position = Vector2(randf_range(-576, 576), randf_range(-324, 324))
+			plant.hunger_value = plant_hunger_value
 			add_child(plant)
 		else:
 			 # If it is paused, wait 1 frame to before checking if it isn't to avoid lag

@@ -1,10 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://c3o6lo6u2jb67"]
+[gd_scene load_steps=4 format=3 uid="uid://c3o6lo6u2jb67"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_jam7s"]
 [ext_resource type="Script" path="res://scripts/pauser.gd" id="2_or2el"]
+[ext_resource type="Texture2D" uid="uid://b7oe30nctrsm0" path="res://art/Among-Us-Logo.png" id="3_gelyu"]
 
 [node name="Main" type="Node2D"]
 process_mode = 1
+z_as_relative = false
+y_sort_enabled = true
 script = ExtResource("1_jam7s")
 
 [node name="Pauser" type="Node" parent="."]
@@ -68,6 +71,19 @@ offset_right = 646.0
 offset_bottom = 380.0
 text = "Main Menu
 "
+
+[node name="AMONGUS" type="Sprite2D" parent="."]
+position = Vector2(-13148, 195)
+texture = ExtResource("3_gelyu")
+
+[node name="Label" type="Label" parent="AMONGUS"]
+modulate = Color(1, 0, 0, 1)
+offset_left = 586.0
+offset_top = -905.0
+offset_right = 784.0
+offset_bottom = -882.0
+scale = Vector2(2.44, 2.44)
+text = "He is Always Watching . . ."
 
 [connection signal="pressed" from="CanvasLayer/ResumeButton" to="Pauser" method="_on_resume_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainMenuButton" to="Pauser" method="_on_main_menu_button_pressed"]

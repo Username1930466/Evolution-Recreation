@@ -1,6 +1,6 @@
 extends Area2D
 
-@export var hunger_value = 30
+var hunger_value : float
 
 func _on_body_entered(body) -> void:
 	 # If touching anything, continue

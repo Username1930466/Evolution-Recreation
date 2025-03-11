@@ -78,22 +78,28 @@ func physics_update(delta):
 func iterate_through_group(nodes):
 	speed = blob.speed
 	 # Look through all the mates
+	var possible_target_nodes : Dictionary
+	possible_target_nodes.clear()
 	for node in nodes:
 		 # If within sight and suitable gender, make target_mate
 		if gender == "female":
 			if node.position.distance_to(blob.position) <= sight and node.gender == "male" and blob.generation == node.generation:
-				target_mate = node
-				break
+				possible_target_nodes[possible_target_nodes.size()] = node
 		if gender == "male":
 			if node.position.distance_to(blob.position) <= sight and node.gender == "female" and blob.generation == node.generation:
-				target_mate = node
-				break
+				possible_target_nodes[possible_target_nodes.size()] = node
 		if gender == "genderless":
-			if node.position.distance_to(blob.position) <= sight and node.gender == "genderless" and blob.generation == node.generation:
-				target_mate = node
-				break
+			if node.position.distance_to(blob.position) <= sight and node.gender == "genderless" and blob.generation == node.generation and node != blob:
+				possible_target_nodes[possible_target_nodes.size()] = node
 	
-	if target_mate == null:
+	if possible_target_nodes == {}:
 		 # If no suitable mates in range, pick a random direction and walk for a bit
 		move_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
 		search_time = sight / speed
+	else:
+		 # Find closest mate and make it target mate
+		var closest_node = blob.main.get_node("AMONGUS") # Start by setting closest to something far offscreen
+		for node in possible_target_nodes.values(): # Then run through every one in range and see if its closer
+			if node.position.distance_to(blob.position) < closest_node.position.distance_to(blob.position):
+				closest_node = node
+		target_mate = closest_node

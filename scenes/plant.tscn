@@ -8,6 +8,7 @@ radius = 2.0
 height = 14.0
 
 [node name="Plant" type="Area2D" groups=["food"]]
+z_as_relative = false
 scale = Vector2(2, 2)
 collision_layer = 2
 script = ExtResource("1_73frh")

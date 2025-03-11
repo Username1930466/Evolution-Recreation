@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://brnw1fenrliu0"]
+[gd_scene load_steps=4 format=3 uid="uid://brnw1fenrliu0"]
 
 [ext_resource type="Script" path="res://scripts/menu.gd" id="1_v78pu"]
 [ext_resource type="Texture2D" uid="uid://dpmptmiejgnx8" path="res://art/Blob.png" id="2_aq2xh"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_gnxo0"]
 
 [node name="menu" type="Node2D"]
 script = ExtResource("1_v78pu")
@@ -24,9 +26,9 @@ text = "Play"
 [node name="QuitButton" type="Button" parent="MenuVisuals"]
 layout_mode = 0
 offset_left = 504.0
-offset_top = 366.0
+offset_top = 436.0
 offset_right = 648.0
-offset_bottom = 422.0
+offset_bottom = 492.0
 theme_override_font_sizes/font_size = 32
 text = "Quit"
 
@@ -84,9 +86,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = 389.5
-offset_top = 430.0
+offset_top = 480.0
 offset_right = 723.5
-offset_bottom = 505.0
+offset_bottom = 555.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "Hover Over Blob = See Stats
@@ -94,5 +96,176 @@ Click Blob = Focus Camera + See More Stats
 P = Pause"
 horizontal_alignment = 1
 
+[node name="CustomizationMenu" type="MeshInstance2D" parent="MenuVisuals"]
+visible = false
+modulate = Color(0.392157, 0.392157, 0.392157, 1)
+position = Vector2(576, 410)
+scale = Vector2(800, 450)
+mesh = SubResource("BoxMesh_gnxo0")
+
+[node name="CustomizeButton" type="Button" parent="MenuVisuals"]
+layout_mode = 0
+offset_left = 504.0
+offset_top = 366.0
+offset_right = 648.0
+offset_bottom = 422.0
+theme_override_font_sizes/font_size = 27
+text = "Customize"
+
+[node name="CustomizationText" type="Label" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 186.0
+offset_top = 195.0
+offset_right = 299.0
+offset_bottom = 218.0
+text = "Starting Blobs:
+Starting Plants:
+Starting Ponds:
+Seconds per Plant:
+Avg Stomach Capacity:
+Avg Starting Thirst:
+Avg Starting Rest:
+Avg Base Speed:
+Avg Sight:
+Stat Variation Multiplier:
+Starting Fat:
+Plant Hunger Value:
+Pond Thirst Value:"
+
+[node name="StartingBlobsChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 195.0
+offset_right = 491.0
+offset_bottom = 218.0
+text = "20"
+placeholder_text = "20
+"
+
+[node name="StartingPlantsChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 221.0
+offset_right = 491.0
+offset_bottom = 244.0
+text = "20"
+placeholder_text = "20
+"
+
+[node name="StartingPondsChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 247.0
+offset_right = 491.0
+offset_bottom = 270.0
+text = "10"
+placeholder_text = "10
+"
+
+[node name="SecondsPerPlantChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 273.0
+offset_right = 491.0
+offset_bottom = 296.0
+text = "1"
+placeholder_text = "1"
+
+[node name="AvgStomachCapacityChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 299.0
+offset_right = 491.0
+offset_bottom = 322.0
+text = "60"
+placeholder_text = "60"
+
+[node name="AvgStartingThirstChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 325.0
+offset_right = 491.0
+offset_bottom = 348.0
+text = "60"
+placeholder_text = "60"
+
+[node name="AvgStartingRestChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 351.0
+offset_right = 491.0
+offset_bottom = 374.0
+text = "90"
+placeholder_text = "90"
+
+[node name="AvgBaseSpeedChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 377.0
+offset_right = 491.0
+offset_bottom = 400.0
+text = "40"
+placeholder_text = "40"
+
+[node name="AvgSightChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 403.0
+offset_right = 491.0
+offset_bottom = 426.0
+text = "200"
+placeholder_text = "200"
+
+[node name="StatVariationMultiplierChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 429.0
+offset_right = 491.0
+offset_bottom = 452.0
+text = "0.25"
+placeholder_text = "0.25"
+
+[node name="StartingFatChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 455.0
+offset_right = 491.0
+offset_bottom = 478.0
+text = "0"
+placeholder_text = "0"
+
+[node name="PlantHungerValueChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 481.0
+offset_right = 491.0
+offset_bottom = 504.0
+text = "30"
+placeholder_text = "30"
+
+[node name="PondThirstValueChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 507.0
+offset_right = 491.0
+offset_bottom = 530.0
+text = "30"
+placeholder_text = "30"
+
 [connection signal="pressed" from="MenuVisuals/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="MenuVisuals/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="MenuVisuals/CustomizeButton" to="." method="_on_customize_button_pressed"]

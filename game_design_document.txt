@@ -31,15 +31,22 @@ State Priority:
 
 Alpha Plans:
 	Alpha 1.2:
-		Priority closest food/water
+		Priority closest food/water/mate - CHECK
 		Comments on the code - CHECK
-		Blobs bounce off border instead of walking into it
-		Proper layering
-		Highly customizable
-		Priority hunger/thirst/sleep for whichever would kill them first
+		Blobs bounce off border instead of walking into it - CHECK
+		Proper layering - CHECK
+		Highly customizable - CHECK
+		Priority hunger/thirst/sleep for whichever would kill them first - CHECK
 		Generation as a stat - CHECK
 		Only blobs with same generation can mate - CHECK
 	Bugs to Fix:
-		Blobs (maybe) reproducing with no mate
-		Not changing button toggle to false when changing camera from one blob to another
-		When selected a blob, sometimes it just unselects (probably because the button un-presses itself, can fix by making if_pressed a variable and changing it by clicking the button)
+		Stats dont update every other time when switching between blobs
+		Extended stats de-select after a little while and dont like coming back
+
+
+Ideas to run by Cam:
+	Aging
+	Scavanger Species
+	Predator Species
+	Plant Evolution/Photosynthesis/Reproduction
+	Customizable Gameplay Speed

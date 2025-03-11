@@ -28,12 +28,17 @@ func update(delta):
 		randomize_wander()
 	
 	 # Check if should be entering any other state
-	if blob.hunger < blob.stomach_capacity / 2:
-		transitioned.emit(self, "hungry")
-	elif blob.thirst < blob.starting_thirst / 2:
-		transitioned.emit(self, "thirsty")
-	elif blob.rest <= blob.starting_rest / 3:
-		transitioned.emit(self, "sleeping")
+	if blob.hunger + blob.fat * 3 < blob.stomach_capacity / 2 or blob.thirst < blob.starting_thirst / 2 or blob.rest <= blob.starting_rest / 3: # Continue if blob is hunger, thristy or tired
+		var tlh = (blob.hunger + blob.fat * 3) / blob.stat_decrease_rate # Determine time left until death of starvation
+		var tlt = blob.thirst / blob.stat_decrease_rate  # Determine time left until death of dehydration
+		var tlr = blob.rest / blob.stat_decrease_rate  # Determine time left until death of sleep deprivation
+		if tlh < tlt and tlh < tlr: # If blob will die of hunger fastest, look for food
+			transitioned.emit(self, "hungry")
+		elif tlt < tlh and tlt < tlr:  # If blob will die of thirst fastest, look for water
+			transitioned.emit(self, "thirsty")
+		else:
+			transitioned.emit(self, "sleeping") # if blob will die of sleep deprivation fastest, go to sleep
+	
 	elif blob.hunger >= blob.stomach_capacity * 0.66667 and blob.thirst >= blob.starting_thirst * 0.66667 and blob.rest >= blob.starting_rest * 0.41667 and mating_cooldown <= 0:
 		transitioned.emit(self, "suitable_for_mating")
 	
@@ -41,5 +46,9 @@ func update(delta):
 func physics_update(delta):
 	speed = blob.speed
 	if blob:
-		 # Change velocity for movement (this is sent to the move and slide function in the main script)
-		blob.velocity = move_direction * speed
+		
+	 # Change velocity for movement (this is sent to the move and slide function in the main script)
+		if blob.position.x < -576 or blob.position.x > 576 or blob.position.y < -324 or blob.position.y > 324:
+			randomize_wander() # Stop moving and pick a new direction for when the blob leaves the edge
+		else:
+			blob.velocity = move_direction * speed
