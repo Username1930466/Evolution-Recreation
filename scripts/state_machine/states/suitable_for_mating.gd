@@ -83,13 +83,13 @@ func iterate_through_group(nodes):
 	for node in nodes:
 		 # If within sight and suitable gender, make target_mate
 		if gender == "female":
-			if node.position.distance_to(blob.position) <= sight and node.gender == "male" and blob.generation == node.generation:
+			if node.position.distance_to(blob.position) <= sight and node.gender == "male" and abs(node.age - blob.age) <= 20:
 				possible_target_nodes[possible_target_nodes.size()] = node
 		if gender == "male":
-			if node.position.distance_to(blob.position) <= sight and node.gender == "female" and blob.generation == node.generation:
+			if node.position.distance_to(blob.position) <= sight and node.gender == "female" and abs(node.age - blob.age) <= 20:
 				possible_target_nodes[possible_target_nodes.size()] = node
 		if gender == "genderless":
-			if node.position.distance_to(blob.position) <= sight and node.gender == "genderless" and blob.generation == node.generation and node != blob:
+			if node.position.distance_to(blob.position) <= sight and node.gender == "genderless" and node != blob and abs(node.age - blob.age) <= 20:
 				possible_target_nodes[possible_target_nodes.size()] = node
 	
 	if possible_target_nodes == {}:

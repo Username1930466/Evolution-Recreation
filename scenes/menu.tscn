@@ -64,7 +64,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("2_aq2xh")
 
 [node name="Blob4" type="Sprite2D" parent="MenuVisuals"]
-position = Vector2(678, 585)
+position = Vector2(777, 600)
 scale = Vector2(2, 2)
 texture = ExtResource("2_aq2xh")
 
@@ -86,14 +86,16 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = 389.5
-offset_top = 480.0
+offset_top = 482.0
 offset_right = 723.5
-offset_bottom = 555.0
+offset_bottom = 609.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "Hover Over Blob = See Stats
 Click Blob = Focus Camera + See More Stats
-P = Pause"
+P = Pause
+S = All Blobs Stats
+Left & Right Arrows = Change Current Stat"
 horizontal_alignment = 1
 
 [node name="CustomizationMenu" type="MeshInstance2D" parent="MenuVisuals"]
@@ -131,7 +133,10 @@ Avg Sight:
 Stat Variation Multiplier:
 Starting Fat:
 Plant Hunger Value:
-Pond Thirst Value:"
+Pond Thirst Value:
+Adulthood:
+Maximum Birth Age:
+Life Expectency:"
 
 [node name="StartingBlobsChanger" type="TextEdit" parent="MenuVisuals"]
 visible = false
@@ -265,6 +270,36 @@ offset_right = 491.0
 offset_bottom = 530.0
 text = "30"
 placeholder_text = "30"
+
+[node name="AdulthoodChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 533.0
+offset_right = 491.0
+offset_bottom = 556.0
+text = "15"
+placeholder_text = "15"
+
+[node name="MaximumBirthAgeChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 559.0
+offset_right = 491.0
+offset_bottom = 582.0
+text = "240"
+placeholder_text = "240"
+
+[node name="LifeExpectencyChanger" type="TextEdit" parent="MenuVisuals"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 585.0
+offset_right = 491.0
+offset_bottom = 608.0
+text = "360"
+placeholder_text = "360"
 
 [connection signal="pressed" from="MenuVisuals/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="MenuVisuals/QuitButton" to="." method="_on_quit_button_pressed"]

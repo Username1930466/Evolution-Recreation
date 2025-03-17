@@ -15,19 +15,23 @@ var starting_rest
 var speed
 var fat : float
 var gender = randi_range(1, 3)
-var mating_cooldown = 15
+var mating_cooldown
 var blob_scene = preload("res://scenes/blob.tscn")
 var main
 var rand_num
 var canvas_layer
 var generation
 var selected : bool = false
+var age : float # In seconds
+var base_color : Color
+var adulthood : float
+var maximum_children : float
+var life_expectency : float
 
 func _ready() -> void:
 	stat_decrease_rate = base_speed / 40
 	main = get_parent()
 	canvas_layer = main.get_node("CanvasLayer")
-	main.current_blobs += 1
 	add_to_group("blobs")
 	
 	 # Randomize stats a bit
@@ -39,6 +43,10 @@ func _ready() -> void:
 	speed = base_speed
 	sight = sight * randf_range(1 - variation_multiplier, 1 + variation_multiplier)
 	rest = rest * randf_range(1 - variation_multiplier, 1 + variation_multiplier)
+	adulthood = adulthood * randf_range(1 - variation_multiplier, 1 + variation_multiplier)
+	mating_cooldown = adulthood
+	maximum_children = maximum_children * randf_range(1 - variation_multiplier, 1 + variation_multiplier)
+	life_expectency = life_expectency * randf_range(1 - variation_multiplier, 1 + variation_multiplier)
 	starting_rest = rest
 	$Button.modulate.a = 0
 	
@@ -59,8 +67,13 @@ func _process(delta: float) -> void:
 	hunger -= stat_decrease_rate * delta
 	thirst -= stat_decrease_rate * delta
 	rest -= stat_decrease_rate * delta
-	if mating_cooldown > 0:
-		mating_cooldown -= 1 * delta
+	age += delta
+	 # If older than maximum_children seconds, no more babies
+	if age >= maximum_children:
+		mating_cooldown = 1
+	else:
+		if mating_cooldown > 0:
+			mating_cooldown -= 1 * delta
 	
 	 # If rest is less than 33%, and hungry or thirsty, decrease speed by amount of tiredness
 	if rest < starting_rest / 3 and (hunger < stomach_capacity / 2 or thirst < starting_thirst / 2):
@@ -77,9 +90,51 @@ func _process(delta: float) -> void:
 	
 	 # Apply change in speed and size from fat
 	var prev_speed = speed
-	var size_mult = fat * 0.05 + 1
+	var size_mult : float
+	if age < adulthood: # If still baby start small and get to normal size
+		size_mult = ((fat * 0.05) + (age / adulthood) + 0.3) / 1.3
+	else:
+		size_mult = (fat * 0.05) + 1
+		var new_color : Color # If adult start greying process
+		var age_factor = (age - adulthood) / (life_expectency - adulthood) # adulthood is when greying starts, 180 is when it ends
+		new_color.r = base_color.r * (1 - age_factor) + 0.8 * age_factor
+		new_color.g = base_color.g * (1 - age_factor) + 0.8 * age_factor
+		new_color.b = base_color.b * (1 - age_factor) + 0.8 * age_factor
+		$Sprite.modulate = new_color
 	scale = Vector2(size_mult, size_mult)
 	speed = prev_speed - fat
+	
+	if main.all_blob_stats == true:
+		if main.active_stat == 1:
+			$Label.text = "ID: " + name
+		elif main.active_stat == 2:
+			$Label.text = "State: " + str(get_node("StateMachine").current_state.name)
+		elif main.active_stat == 3:
+			$Label.text = "Hunger: " + String("%0.3f" % hunger)
+		elif main.active_stat == 4:
+			$Label.text = "Thirst: " + String("%0.3f" % thirst)
+		elif main.active_stat == 5:
+			$Label.text = "Rest: " + String("%0.3f" % rest)
+		elif main.active_stat == 6:
+			$Label.text = "Fat: " + String("%0.3f" % fat)
+		elif main.active_stat == 7:
+			$Label.text = "Gender: " + gender
+		elif main.active_stat == 8:
+			$Label.text = "Base Speed: " + String("%0.3f" % base_speed)
+		elif main.active_stat == 9:
+			$Label.text = "Speed: " + String("%0.3f" % speed)
+		elif main.active_stat == 10:
+			$Label.text = "Sight: " + String("%0.3f" % sight)
+		elif main.active_stat == 11:
+			$Label.text = "Stomach Capacity: " + String("%0.3f" % stomach_capacity)
+		elif main.active_stat == 12:
+			$Label.text = "Mating Cooldown: " + String("%0.3f" % mating_cooldown)
+		elif main.active_stat == 13:
+			$Label.text = "Age: " + String("%0.3f" % age)
+		else:
+			$Label.text = "Generation: " + str(generation)
+		$Label.position = Vector2(-$Label.size.x / 2, -50)
+		$Label.visible = true
 	
 	 # Detect if mouse in hovering over blob
 	var mouse_pos = get_global_mouse_position()
@@ -88,12 +143,15 @@ func _process(delta: float) -> void:
 		if selected == false:
 			 # If it is, show small stat box
 			$Label.text = "Hung: " + String("%0.1f" % hunger) + "\nThir: " + String("%0.1f" % thirst) + "\nRest: " + String("%0.1f" % rest) + "\nFat: " + String("%0.1f" % fat)
+			$Label.size = Vector2(65, 65)
+			$Label.position = Vector2(-65, -65)
 			$MeshInstance2D.visible = true
 			$Label.visible = true
 	else:
 		 # If not, hide it
 		$MeshInstance2D.visible = false
-		$Label.visible = false
+		if main.all_blob_stats == false:
+			$Label.visible = false
 	
 	 # If showing extended stats, update them
 	var extended_stats = canvas_layer.get_node("Extended Stats")
@@ -114,7 +172,7 @@ func _process(delta: float) -> void:
 			stamp_sprite.rotation = randf_range(0, PI * 2)
 			stamp_sprite.scale = scale * 0.65
 			
-			get_parent().add_child(stamp_sprite)
+			main.add_child(stamp_sprite)
 			death()
 	
 	if thirst <= 0:
@@ -127,7 +185,7 @@ func _process(delta: float) -> void:
 		stamp_sprite.rotation = randf_range(0, PI * 2)
 		stamp_sprite.scale = scale * 0.65
 		
-		get_parent().add_child(stamp_sprite)
+		main.add_child(stamp_sprite)
 		death()
 	
 	if rest <= 0:
@@ -139,7 +197,19 @@ func _process(delta: float) -> void:
 		stamp_sprite.modulate = $Sprite.modulate
 		stamp_sprite.scale = scale * 0.65
 		
-		get_parent().add_child(stamp_sprite)
+		main.add_child(stamp_sprite)
+		death()
+	
+	if age >= life_expectency:
+		var old_blob_texture = load("res://art/OldBlob.png")
+		
+		var stamp_sprite = Sprite2D.new()
+		stamp_sprite.texture = old_blob_texture
+		stamp_sprite.position = position
+		stamp_sprite.modulate = Color(0.8, 0.8, 0.8)
+		stamp_sprite.scale = scale * 0.65
+		
+		main.add_child(stamp_sprite)
 		death()
 
 func _physics_process(delta: float) -> void:
@@ -159,29 +229,37 @@ func birth_a_child(other_parent):
 	child.position = position
 	var sprite = child.get_node("Sprite")
 	 # Average color between parents
-	var avg_color = ($Sprite.modulate + other_parent.get_node("Sprite").modulate) / 2
+	var avg_color = (base_color + other_parent.base_color) / 2
 	 # Avergae color between parent 1 and average
-	var avg_color_1 = ($Sprite.modulate + avg_color) / 2
+	var avg_color_1 = (base_color + avg_color) / 2
 	 # Average color between parent 2 and average
-	var avg_color_2 = (other_parent.get_node("Sprite").modulate + avg_color) / 2
+	var avg_color_2 = (other_parent.base_color + avg_color) / 2
 	 # Set color to random between semi-averages of each parent
 	var color = Color(randf_range(avg_color_1.r, avg_color_2.r), randf_range(avg_color_1.g, avg_color_2.g), randf_range(avg_color_1.b, avg_color_2.b), 1)
+	color = Color(color.r * randf_range(0.9, 1.1), color.g * randf_range(0.9, 1.1), color.b * randf_range(0.9, 1.1), 1)
 	sprite.modulate = color
+	child.base_color = color
 	 # Other stats get a randomness multiplier in the _onready(), so we just take the average
 	child.hunger = (stomach_capacity + other_parent.stomach_capacity) / 2
 	child.thirst = (starting_thirst + other_parent.starting_thirst) / 2
 	child.rest = (starting_rest + other_parent.starting_rest) / 2
 	child.base_speed = (base_speed + other_parent.base_speed) / 2
 	child.sight = (sight + other_parent.sight) / 2
-	child.mating_cooldown = 15
+	child.mating_cooldown = adulthood
 	child.fat = main.starting_fat
+	child.adulthood = main.blob_adulthood
+	child.maximum_children = main.blob_maximum_birth_age
+	child.life_expectency = main.blob_life_expectency
 	if gender == "female" or "male":
 		child.gender = randi_range(1, 2)
 	else:
 		child.gender = 3
 	
 	child.set_name("Blob_%d" % main.global_blob_count)
-	child.generation = generation + 1
+	if generation >= other_parent.generation:
+		child.generation = generation + 1
+	else:
+		child.generation = other_parent.generation + 1
 	main.add_child(child)
 
 func update_extended_stats(label):
@@ -199,11 +277,11 @@ func update_extended_stats(label):
 	label.text += "\nSight: " + String("%0.3f" % sight)
 	label.text += "\nStomach Capacity: " + String("%0.3f" % stomach_capacity)
 	label.text += "\nMating Cooldown: " + String("%0.3f" % mating_cooldown)
+	label.text += "\nAge: " + String("%0.3f" % age)
 	label.text += "\nGeneration: " + str(generation)
 
 func death():
 	 # Remove from groups, delete any camera and extended stats, and delete the node
-	main.current_blobs -= 1
 	remove_from_group("blobs")
 	remove_from_group("suitable_for_mating")
 	selected = false
@@ -226,6 +304,8 @@ func send_stats_to_main(i):
 	main.fats[i] = fat
 	main.base_speeds[i] = base_speed
 	main.sights[i] = sight
+	main.blob_names[i] = name
+	main.blob_generations[i] = generation
 
 func _on_button_pressed() -> void:
 	 # When blob clicked

@@ -30,14 +30,40 @@ State Priority:
 	Idle
 
 Alpha Plans:
+	Alpha 1.3:
+		Fixed current blobs being inaccurate - CHECK
+		Highest generation corner stat - CHECK
+		Time since start corner stat - CHECK
+		Debug style stats - CHECK
+		Aging - CHECK
+		Only blobs withing 20 second age range of eachother can reproduce - CHECK
+		Blobs young enough and old enough cant reproduce - CHECK
+		Wind
+		Blob weight (to be blown by wind)
+		Plant Photosynthesis
+		Plant Reproduction
+		Plant Evolution
+		Land Plants (grass, propagates by wind)
+		Water Plants (algae)
+		Rhizomes (also need water)
+		
+	
 	Bugs to Fix:
 		Stats dont update every other time when switching between blobs
 		Extended stats de-select after a little while and dont like coming back
-
-
-Ideas to run by Cam:
-	Aging
-	Scavanger Species
-	Predator Species
-	Plant Evolution/Photosynthesis/Reproduction
-	Customizable Gameplay Speed
+	
+	Later stuff:
+		Poop
+		Poop from animals makes fertile land
+		Corpse aging makes fertile land
+		If seed lands on fertile or rise pops up, it grows faster and bigger
+		Water depth: shallow, medium, deep (medium slows down, deep must go around)
+		Customized parameters in the bottom corner
+		Omnivore/Scavenger Species (eats anything)
+		Predator Species
+		Animal pregnancy (recourse drain is doubled and can’t reproduce again at the time)
+		Certain species larger, slower, last longer, less babies, gestation longer
+		Carnivores move faster, are smaller, and have multiple babies per pregnancy
+		Spots and patterns, hair on blobs
+		Fungus grows on animals
+		Parasites (like ticks and lice)

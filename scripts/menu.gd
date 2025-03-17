@@ -35,6 +35,9 @@ func _on_play_button_pressed() -> void:
 	main.starting_fat = $MenuVisuals/StartingFatChanger.text
 	main.plant_hunger_value = $MenuVisuals/PlantHungerValueChanger.text
 	main.pond_thirst_value = $MenuVisuals/PondThirstValueChanger.text
+	main.blob_adulthood = $MenuVisuals/AdulthoodChanger.text
+	main.blob_maximum_birth_age = $MenuVisuals/MaximumBirthAgeChanger.text
+	main.blob_life_expectency = $MenuVisuals/LifeExpectencyChanger.text
 	add_child(main)
 
 func _on_quit_button_pressed() -> void:
@@ -44,7 +47,7 @@ func _on_quit_button_pressed() -> void:
 func _on_customize_button_pressed() -> void:
 	if customization_menu == false:
 		customization_menu = true
-		$MenuVisuals/CustomizeButton.position = Vector2(181, 574)
+		$MenuVisuals/CustomizeButton.position = Vector2(825, 574)
 		$MenuVisuals/CustomizeButton.text = "Leave Menu"
 		$MenuVisuals/CustomizeButton.add_theme_font_size_override("font_size", 23)
 		$MenuVisuals/CustomizationMenu.visible = true
@@ -62,6 +65,9 @@ func _on_customize_button_pressed() -> void:
 		$MenuVisuals/StartingFatChanger.visible = true
 		$MenuVisuals/PlantHungerValueChanger.visible = true
 		$MenuVisuals/PondThirstValueChanger.visible = true
+		$MenuVisuals/AdulthoodChanger.visible = true
+		$MenuVisuals/MaximumBirthAgeChanger.visible = true
+		$MenuVisuals/LifeExpectencyChanger.visible = true
 	else:
 		customization_menu = false
 		$MenuVisuals/CustomizeButton.position = Vector2(504, 366)
@@ -82,3 +88,6 @@ func _on_customize_button_pressed() -> void:
 		$MenuVisuals/StartingFatChanger.visible = false
 		$MenuVisuals/PlantHungerValueChanger.visible = false
 		$MenuVisuals/PondThirstValueChanger.visible = false
+		$MenuVisuals/AdulthoodChanger.visible = false
+		$MenuVisuals/MaximumBirthAgeChanger.visible = false
+		$MenuVisuals/LifeExpectencyChanger.visible = false
