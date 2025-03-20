@@ -4,7 +4,6 @@ extends Node2D
 var starting_blobs : int
 var starting_plants : int
 var starting_ponds : int
-var seconds_per_plant : float
  # Define scenes
 var blob_scene = preload("res://scenes/blob.tscn")
 var plant_scene = preload("res://scenes/plant.tscn")
@@ -44,6 +43,9 @@ var blob_adulthood : float
 var blob_maximum_birth_age : float
 var blob_life_expectency : float
 
+var wind_direction = randf_range(0.0, 360.0)
+var wind_speed = randi_range(0, 150)
+
 func _ready() -> void:
 	 # Create starting blobs
 	for i in starting_blobs:
@@ -71,7 +73,8 @@ func _ready() -> void:
 	for i in starting_plants:
 		var plant = plant_scene.instantiate()
 		plant.position = Vector2(randf_range(-576, 576), randf_range(-324, 324))
-		plant.hunger_value = plant_hunger_value
+		plant.full_hunger_value = plant_hunger_value
+		plant.variation_multiplier = stat_variation_multiplier
 		add_child(plant)
 	
 	 # Create starting ponds
@@ -79,24 +82,16 @@ func _ready() -> void:
 		var pond = pond_scene.instantiate()
 		pond.position = Vector2(randf_range(-556, 556), randf_range(-304, 304))
 		pond.thirst_value = pond_thirst_value
+		pond.set_name("Pond_%d" % i)
 		add_child(pond)
 	
-	spawn_plants_infinite()
-	
 	read_avg_stats()
-
-func spawn_plants_infinite():
-	while true:
-		 # If the game isn't paused, create a plant every (seconds per plant) seconds
-		if script_paused == false:
-			await get_tree().create_timer(seconds_per_plant).timeout
-			var plant = plant_scene.instantiate()
-			plant.position = Vector2(randf_range(-576, 576), randf_range(-324, 324))
-			plant.hunger_value = plant_hunger_value
-			add_child(plant)
-		else:
-			 # If it is paused, wait 1 frame to before checking if it isn't to avoid lag
-			await get_tree().create_timer(0).timeout
+	
+	update_plant_wind()
+	
+	change_wind_speed()
+	
+	change_wind_direction()
 
 func read_avg_stats():
 	var times_done = -1
@@ -208,3 +203,37 @@ func _process(delta: float) -> void:
 			active_stat -= 1
 			if active_stat < 1:
 				active_stat = 14
+
+func change_wind_speed():
+	while true:
+		await get_tree().create_timer(randf_range(5, 10)).timeout # Change wind every 5-10 seconds
+		var change_dir = 1 if randi_range(1, 2) == 1 else -1 # Pick to make speed go up or down
+		var change_amount = randf_range(10, 150)
+		for i in change_amount: # Speed up/slow down over time
+			await get_tree().create_timer(0.03333).timeout
+			wind_speed += change_dir
+			wind_speed = clamp(wind_speed, 0, 300) # Stop from going to slow or to fast
+			update_plant_wind()
+
+func change_wind_direction():
+	while true:
+		await get_tree().create_timer(randf_range(5, 10)).timeout # Change wind every 5-10 seconds
+		var change_dir = 1 if randi_range(1, 2) == 1 else -1 # Pick to make direction go up or down
+		var change_amount = randf_range(15, 90)
+		for i in change_amount: # Go up/go down over time
+			await get_tree().create_timer(0.03333).timeout
+			wind_direction += change_dir
+			wind_direction = clamp(wind_direction, 0, 360) # Stop from going to far or negative
+			update_plant_wind()
+
+func update_plant_wind():
+	var wind_dir_radians = deg_to_rad(wind_direction)
+	var wind_dir_vec2 = Vector2(cos(wind_dir_radians), sin(wind_dir_radians))
+	var nodes = get_tree().get_nodes_in_group("sways_in_wind")
+	for node in nodes: # Update plants wind sway shader with new speed
+		if node is Sprite2D:
+			node.material.set_shader_parameter("wind_speed", wind_speed)
+			node.material.set_shader_parameter("wind_dir", wind_dir_vec2)
+		else:
+			node.get_node("Sprite").material.set_shader_parameter("wind_speed", wind_speed)
+			node.get_node("Sprite").material.set_shader_parameter("wind_dir", wind_dir_vec2)

@@ -25,7 +25,6 @@ func _on_play_button_pressed() -> void:
 	main.starting_blobs = $MenuVisuals/StartingBlobsChanger.text
 	main.starting_plants = $MenuVisuals/StartingPlantsChanger.text
 	main.starting_ponds = $MenuVisuals/StartingPondsChanger.text
-	main.seconds_per_plant = $MenuVisuals/SecondsPerPlantChanger.text
 	main.avg_starting_stomach_capacity = $MenuVisuals/AvgStomachCapacityChanger.text
 	main.avg_starting_starting_thirst = $MenuVisuals/AvgStartingThirstChanger.text
 	main.avg_starting_starting_rest = $MenuVisuals/AvgStartingRestChanger.text
@@ -55,7 +54,6 @@ func _on_customize_button_pressed() -> void:
 		$MenuVisuals/StartingBlobsChanger.visible = true
 		$MenuVisuals/StartingPlantsChanger.visible = true
 		$MenuVisuals/StartingPondsChanger.visible = true
-		$MenuVisuals/SecondsPerPlantChanger.visible = true
 		$MenuVisuals/AvgStomachCapacityChanger.visible = true
 		$MenuVisuals/AvgStartingThirstChanger.visible = true
 		$MenuVisuals/AvgStartingRestChanger.visible = true
@@ -78,7 +76,6 @@ func _on_customize_button_pressed() -> void:
 		$MenuVisuals/StartingBlobsChanger.visible = false
 		$MenuVisuals/StartingPlantsChanger.visible = false
 		$MenuVisuals/StartingPondsChanger.visible = false
-		$MenuVisuals/SecondsPerPlantChanger.visible = false
 		$MenuVisuals/AvgStomachCapacityChanger.visible = false
 		$MenuVisuals/AvgStartingThirstChanger.visible = false
 		$MenuVisuals/AvgStartingRestChanger.visible = false

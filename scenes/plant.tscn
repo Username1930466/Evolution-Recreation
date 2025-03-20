@@ -1,13 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://bp2517saiosg"]
+[gd_scene load_steps=6 format=3 uid="uid://bp2517saiosg"]
 
 [ext_resource type="Script" path="res://scripts/plant.gd" id="1_73frh"]
 [ext_resource type="Texture2D" uid="uid://naa38ew73qn6" path="res://art/Plant.png" id="2_icyf2"]
+[ext_resource type="Shader" path="res://scripts/shaders/wind_sway.gdshader" id="2_wyflg"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i3q1p"]
+shader = ExtResource("2_wyflg")
+shader_parameter/wind_speed = null
+shader_parameter/wind_dir = null
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_de1qb"]
 radius = 2.0
 height = 14.0
 
-[node name="Plant" type="Area2D" groups=["food"]]
+[node name="Plant" type="Area2D" groups=["food", "sways_in_wind"]]
 z_as_relative = false
 scale = Vector2(2, 2)
 collision_layer = 2
@@ -16,10 +22,12 @@ metadata/_edit_group_ = true
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture_filter = 1
+material = SubResource("ShaderMaterial_i3q1p")
 texture = ExtResource("2_icyf2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 1)
 shape = SubResource("CapsuleShape2D_de1qb")
 
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

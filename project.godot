@@ -33,6 +33,7 @@ blob_cameras=""
 extended_stats=""
 blobs=""
 graph=""
+sways_in_wind=""
 
 [input]
 

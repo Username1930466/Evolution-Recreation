@@ -38,15 +38,12 @@ Alpha Plans:
 		Aging - CHECK
 		Only blobs withing 20 second age range of eachother can reproduce - CHECK
 		Blobs young enough and old enough cant reproduce - CHECK
-		Wind
-		Blob weight (to be blown by wind)
-		Plant Photosynthesis
-		Plant Reproduction
-		Plant Evolution
-		Land Plants (grass, propagates by wind)
-		Water Plants (algae)
-		Rhizomes (also need water)
-		
+		Wind - CHECK
+		Blob weight (to be blown by wind) - CHECK
+		Plant Photosynthesis - CHECK
+		Plant Reproduction - CHECK
+		Plant Evolution - CHECK
+		Land Plants (grass, propagates by wind (whoops i made it roots)) - CHECK
 	
 	Bugs to Fix:
 		Stats dont update every other time when switching between blobs
@@ -67,3 +64,11 @@ Alpha Plans:
 		Spots and patterns, hair on blobs
 		Fungus grows on animals
 		Parasites (like ticks and lice)
+		Carbon Dioxide and Oxygen levels
+		Animal breathing
+		Plants needing carbon dioxide and making oxygen
+		Day/night cycle
+		Fast wind uproots dead plants
+		Plant old age
+		Water Plants (algae)
+		Trees

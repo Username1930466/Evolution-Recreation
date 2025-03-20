@@ -73,7 +73,7 @@ func _process(delta: float) -> void:
 		mating_cooldown = 1
 	else:
 		if mating_cooldown > 0:
-			mating_cooldown -= 1 * delta
+			mating_cooldown -= delta
 	
 	 # If rest is less than 33%, and hungry or thirsty, decrease speed by amount of tiredness
 	if rest < starting_rest / 3 and (hunger < stomach_capacity / 2 or thirst < starting_thirst / 2):
@@ -103,6 +103,19 @@ func _process(delta: float) -> void:
 		$Sprite.modulate = new_color
 	scale = Vector2(size_mult, size_mult)
 	speed = prev_speed - fat
+	
+	 # Get blown by wind
+	
+	var wind_speed = main.wind_speed
+	var wind_direction = deg_to_rad(main.wind_direction)
+	 # Convert wind dir to Vector2
+	wind_direction = Vector2(cos(wind_direction), sin(wind_direction))
+	var weight = size_mult * 150
+	
+	if wind_speed > weight:
+		position += -wind_direction * ((wind_speed - weight) * 0.1) * delta
+		position.x = clamp(position.x, -576, 576)
+		position.y = clamp(position.y, -324, 324)
 	
 	if main.all_blob_stats == true:
 		if main.active_stat == 1:
