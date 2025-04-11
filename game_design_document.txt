@@ -1,74 +1,37 @@
-Blobs have five states:
-	Idle:
-		If hunger, thirst and rest are above certain level. Either stay still or move randomly.
-	Hungry:
-		If hunger is below certain level. Search for food, if food is in sight, go to it and eat it, if not, move randomly and look again.
-	Thirsty:
-		If thirst is below certain level. Search for water, if water is in sight, go to it and drink it, if not, move randomly and look again.
-	Tired:
-		If hunger and thirst is above certain level and rest is below certain level, sleep. If hungry or thirsty and tired, decrease speed by amount of tiredness under acceptable level.
-	Suitable For Mating:
-		See Below
+Overhaul:
+	Traits: start with random, can mutate over time
+	Species: defined by genes, different enough genes, new species
 
-Stats:
-	Speed - Decreased when tired or hungry, higher base speed = get hungry, thirsty and tired faster.
-	Sight - How far it can see for food.
-	Stomach Capacity - How much food it can fit in its stomach, if it eats more than it can hold, it goes over in fat.
-	Fat - Start with none. higher fat = decreased speed by amount of fat. higher fat = increased stomach capacity by amount of fat. if wouldve starved to death, can process fat into food.
-	Gender - Chosen randomly of three values, male, female, and genderless. Males and females can mate. Genderless can only mate with eachother.
-
-Reproduction:
-	If a blob's hunger, thirst and resat are above a certain level (higher than the minimum to be idle), they are suitable for mating.
-	If a male and female blob, or two genderless blobs suitable for mating and within eachothers' range of sights, they will go to eachother, and reproduce.
-	The child's stats will be the average of the parents' with some modifiers as mutation. Gender is male or female if the parents have genders, and genderless if the parents don't.
-
-State Priority:
-	Hungry
-	Thirsty
-	Tired
-	Suitable For Mating
-	Idle
-
-Alpha Plans:
-	Alpha 1.3:
-		Fixed current blobs being inaccurate - CHECK
-		Highest generation corner stat - CHECK
-		Time since start corner stat - CHECK
-		Debug style stats - CHECK
-		Aging - CHECK
-		Only blobs withing 20 second age range of eachother can reproduce - CHECK
-		Blobs young enough and old enough cant reproduce - CHECK
-		Wind - CHECK
-		Blob weight (to be blown by wind) - CHECK
-		Plant Photosynthesis - CHECK
-		Plant Reproduction - CHECK
-		Plant Evolution - CHECK
-		Land Plants (grass, propagates by wind (whoops i made it roots)) - CHECK
+Trait List:
+	Required:
+		Skin: Smooth, Scales, Moist
+		Blood Type: Warm, Cold
+		Birth Type: Live, Eggs
+		Breathe Type: Lungs, Gills
+		Child Breathe Type: Lungs, Gills
+		Skeleton: Light, Normal
+		Living Location: Land, Land & Water, Water
 	
-	Bugs to Fix:
-		Stats dont update every other time when switching between blobs
-		Extended stats de-select after a little while and dont like coming back
-	
-	Later stuff:
-		Poop
-		Poop from animals makes fertile land
-		Corpse aging makes fertile land
-		If seed lands on fertile or rise pops up, it grows faster and bigger
-		Water depth: shallow, medium, deep (medium slows down, deep must go around)
-		Customized parameters in the bottom corner
-		Omnivore/Scavenger Species (eats anything)
-		Predator Species
-		Animal pregnancy (recourse drain is doubled and can’t reproduce again at the time)
-		Certain species larger, slower, last longer, less babies, gestation longer
-		Carnivores move faster, are smaller, and have multiple babies per pregnancy
-		Spots and patterns, hair on blobs
-		Fungus grows on animals
-		Parasites (like ticks and lice)
-		Carbon Dioxide and Oxygen levels
-		Animal breathing
-		Plants needing carbon dioxide and making oxygen
-		Day/night cycle
-		Fast wind uproots dead plants
-		Plant old age
-		Water Plants (algae)
-		Trees
+	Optional:
+		Hair
+		Fur
+		Feathers
+		Produce Milk
+		Wings
+		Beak
+		Teeth
+		Hard-Shelled Eggs
+		Soft-Shelled Eggs
+		Jelly Eggs
+		Lay Eggs On Land
+		Lay Eggs In Water
+		Fins
+
+Taxonomy:
+	Vertebrates: All:
+		Name : Skin, Blood Type, Birth Type, Breathe Type, Child Breathe Type, Skeleton, Living Location, Extras. (o = optional)
+		Mammal: Smooth, Warm   , Live(o)   , Lungs       , Lungs             , Normal  , Land/Land & Water/Water, Hair/Fur, Produce Milk, Teeth(o)
+		Bird:  Smooth, Warm    , Eggs      , Lungs       , Lungs             , Light   , Land           , Feathers, Wings, Beak, Hard-Shelled Eggs, Lay Eggs On Land
+		Reptile: Scales, Cold  , Eggs(o)   , Lungs       , Lungs             , Normal  , Land/Land & Water/Water, Teeth, Soft-Shelled Eggs, Lay Eggs On Land
+		Amphibian: Moist, Cold , Eggs      , Lungs       , Gills             , Normal  , Land & Water/Water, Teeth, Jelly Eggs, Lay Eggs In Water
+		Fish:  Smooth/Scales, Cold, Eggs(o), Gills       , Gills             , Normal  , Water          , Teeth, Jelly Eggs, Lay Eggs In Water, Fins

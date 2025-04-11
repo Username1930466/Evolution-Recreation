@@ -12,12 +12,10 @@ func _process(delta: float) -> void:
 		$"../CanvasLayer/PausedLabel".visible = true
 		$"../CanvasLayer/ResumeButton".visible = true
 		$"../CanvasLayer/MainMenuButton".visible = true
-		get_parent().script_paused = true
 		get_tree().paused = true
 
 func _on_resume_button_pressed() -> void:
 	 # If resume button pressed, unpause game, and hide pause inerface
-	get_parent().script_paused = false
 	get_tree().paused = false
 	$"../CanvasLayer/PausedLabel".visible = false
 	$"../CanvasLayer/ResumeButton".visible = false
